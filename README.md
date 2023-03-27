@@ -1,0 +1,1 @@
+ABLUKA takiminin renk tanima otonom drone kontrol kodlari
