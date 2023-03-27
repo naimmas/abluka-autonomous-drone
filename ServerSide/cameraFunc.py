@@ -3,18 +3,15 @@ import cv2
 import numpy as np
 import imagezmq
 from serverDef import globalVars, cameraSender, cameraServers
+from picamera2 import Picamera2  
 
 
 def nothing(*arg):
     pass    # Initial HSV GUI slider values to load on program start.
 
 def maviAlgila():
-    camera = cv2.VideoCapture(0)
+    
 
-    width = 640
-    height = 480
-    camera.set(3, width)
-    camera.set(4, height)
     icol = (100, 168, 40, 145, 255, 255, 5, 5)
     lowHue = icol[0]
     lowSat = icol[1]
@@ -25,8 +22,13 @@ def maviAlgila():
     kernalSzMrph = icol[6]
     kernalSzGsn = icol[7]
     oPayi = 80
+
+    picam2 = Picamera2()
+    picam2.configure(picam2.create_preview_configuration(main={"format": 'XRGB8888', "size": (640, 480)}))
+    picam2.start()
+
     while True:
-        _, frame = camera.read()
+        frame = picam2.capture_array()
 
         # kernal = np.ones((5, 5), "uint8")
         if(globalVars.isNew):
