@@ -69,7 +69,7 @@ def maviAlgila():
         if(kernalSzGsn%2==1):
             kernalSizeGsn = (kernalSzGsn, kernalSzGsn)       
         
-        cv2.imshow('Raw Image', frame)
+        # cv2.imshow('Raw Image', frame)
         cameraSender.send_image(cameraServers[0], frame)
 
         frameBGR = cv2.GaussianBlur(frame, kernalSizeGsn, 0)
@@ -85,7 +85,7 @@ def maviAlgila():
 
         # Put mask over top of the original image.      
         result = cv2.bitwise_and(frame, frame, mask = mask)        
-        cv2.imshow('Final Image', result)
+        # cv2.imshow('Final Image', result)
         cameraSender.send_image(cameraServers[1], result)
         
         contours_bl, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
