@@ -4,8 +4,6 @@ import numpy as np
 import imagezmq
 from serverDef import globalVars, cameraServers
 from picamera2 import Picamera2  
-from picamera2.array import PiRGBArray
-
 
 
 def nothing(*arg):
@@ -14,6 +12,7 @@ def nothing(*arg):
 cameraSender = imagezmq.ImageSender(connect_to='tcp://192.168.1.13:5555')
 
 def maviAlgila():
+
     icol = (100, 168, 40, 145, 255, 255, 5, 5)
     lowHue = icol[0]
     lowSat = icol[1]
@@ -25,13 +24,13 @@ def maviAlgila():
     kernalSzGsn = icol[7]
     oPayi = 80
 
-    camera = Picamera2()
-    camera.resolution = (640, 480)
-    camera.framerate = 32
-    rawCapture = PiRGBArray(camera, size=(640, 480))
+    picam2 = Picamera2()
+    picam2.configure(picam2.create_preview_configuration(main={"format": 'BGR888', "size": (640, 480)}))
+    picam2.start()
 
-    for frames in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
-        frame = frames.array
+    while True:
+        frame = picam2.capture_array()
+        # frame = cv2.cvtColor(capImg, cv2.COLOR_RGB2BGR)
 
         # kernal = np.ones((5, 5), "uint8")
         if(globalVars.isNew):
