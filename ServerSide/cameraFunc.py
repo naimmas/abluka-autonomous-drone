@@ -2,13 +2,14 @@ import time
 import cv2
 import numpy as np
 import imagezmq
-from serverDef import globalVars, cameraSender, cameraServers
+from serverDef import globalVars, cameraServers
 from picamera2 import Picamera2  
 
 
 def nothing(*arg):
     pass    # Initial HSV GUI slider values to load on program start.
 
+cameraSender = imagezmq.ImageSender(connect_to='tcp://192.168.1.13:5555')
 def maviAlgila():
     
 
@@ -28,7 +29,8 @@ def maviAlgila():
     picam2.start()
 
     while True:
-        frame = picam2.capture_array()
+        capImg = picam2.capture_array()
+        frame = cv2.cvtColor(capImg, cv2.COLOR_RGB2BGR)
 
         # kernal = np.ones((5, 5), "uint8")
         if(globalVars.isNew):
