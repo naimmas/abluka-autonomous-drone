@@ -7,6 +7,3 @@ while True:  # show streamed images until Ctrl-C
     cv2.imshow(rpi_name, image) # 1 window for each RPi
     cv2.waitKey(1)
     image_hub.send_reply(b'OK')
-
-
-#####denemeler

@@ -1,4 +1,3 @@
-# Python 3 server example
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from serverDef import html, hostName, serverPort
 from serverDef import globalVars
@@ -35,7 +34,7 @@ class MyServer(BaseHTTPRequestHandler):
             elif('sliderOpay' in parsed_url.path):
                 globalVars.oOpay = captured_value['value'][0]
             globalVars.isNew = True
-    
+
     def log_message(self, format, *args):
         return
 

@@ -2,17 +2,22 @@ import time
 import cv2
 import numpy as np
 import imagezmq
-from serverDef import globalVars, cameraServers
+from serverDef import globalVars, cameraSender, cameraServers
 from picamera2 import Picamera2  
 
 
 def nothing(*arg):
     pass    # Initial HSV GUI slider values to load on program start.
 
-cameraSender = imagezmq.ImageSender(connect_to='tcp://192.168.1.13:5555')
-
 def maviAlgila():
-
+    picam2 = Picamera2()
+    picam2.configure(picam2.create_preview_configuration(main={"format": 'BGR888', "size": (640, 480)}))
+    picam2.start()
+    # camera = cv2.VideoCapture(0)
+    # width = 640
+    # height = 480
+    # camera.set(3, width)
+    # camera.set(4, height)
     icol = (100, 168, 40, 145, 255, 255, 5, 5)
     lowHue = icol[0]
     lowSat = icol[1]
@@ -23,16 +28,11 @@ def maviAlgila():
     kernalSzMrph = icol[6]
     kernalSzGsn = icol[7]
     oPayi = 80
-
-    picam2 = Picamera2()
-    picam2.configure(picam2.create_preview_configuration(main={"format": 'BGR888', "size": (640, 480)}))
-    picam2.start()
-
     while True:
-        frame = picam2.capture_array()
-        # frame = cv2.cvtColor(capImg, cv2.COLOR_RGB2BGR)
-
-        # kernal = np.ones((5, 5), "uint8")
+        # _, frame = camera.read()
+        capImg = picam2.capture_array()
+        frame = cv2.cvtColor(capImg, cv2.COLOR_RGB2BGR)
+        kernal = np.ones((5, 5), "uint8")
         if(globalVars.isNew):
             if(globalVars.oHueL != 0 and (not(lowHue == globalVars.oHueL))):
                 lowHue = int(globalVars.oHueL)
@@ -68,8 +68,10 @@ def maviAlgila():
             kernalSizeMrph = (kernalSzMrph, kernalSzMrph)
         if(kernalSzGsn%2==1):
             kernalSizeGsn = (kernalSzGsn, kernalSzGsn)       
-        # cv2.imshow('Raw Image', frame)
+        
+        cv2.imshow('Raw Image', frame)
         cameraSender.send_image(cameraServers[0], frame)
+
         frameBGR = cv2.GaussianBlur(frame, kernalSizeGsn, 0)
         hsv = cv2.cvtColor(frameBGR, cv2.COLOR_BGR2HSV)
         colorLow = np.array([lowHue,lowSat,lowVal])      
@@ -83,8 +85,9 @@ def maviAlgila():
 
         # Put mask over top of the original image.      
         result = cv2.bitwise_and(frame, frame, mask = mask)        
-        # cv2.imshow('Final Image', result)
+        cv2.imshow('Final Image', result)
         cameraSender.send_image(cameraServers[1], result)
+        
         contours_bl, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         # contours = contours_bl[0] if len(contours_bl) == 2 else contours_bl[1]
         for pic, contour in enumerate(contours_bl):
@@ -101,9 +104,10 @@ def maviAlgila():
         k = cv2.waitKey(5) & 0xFF
         if k == 27:
             break
-  
+
     cv2.destroyAllWindows()
-    camera.release()
+    # camera.release()
+    picam2.release()
 
 
 def ortala(centerX, centerY, width, height, ortalamapayi):

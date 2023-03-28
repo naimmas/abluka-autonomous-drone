@@ -1,4 +1,4 @@
-from httpServer import serverThread
+from httpServer import runAll
 
 if __name__ == "__main__":   
-    serverThread()
+    runAll()
