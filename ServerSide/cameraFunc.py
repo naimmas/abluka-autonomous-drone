@@ -11,7 +11,7 @@ def nothing(*arg):
 
 def maviAlgila():
     picam2 = Picamera2()
-    picam2.configure(picam2.create_preview_configuration(main={"format": 'BGR888', "size": (640, 480)}))
+    picam2.configure(picam2.create_preview_configuration(main={"format": 'XRGB8888'})) #, "size": (640, 480)}, lores={'size':(440,440), 'format':'YUV420'}, encode='lores'))
     picam2.start()
     # camera = cv2.VideoCapture(0)
     # width = 640
@@ -30,8 +30,8 @@ def maviAlgila():
     oPayi = 80
     while True:
         # _, frame = camera.read()
-        capImg = picam2.capture_array()
-        frame = cv2.cvtColor(capImg, cv2.COLOR_RGB2BGR)
+        frame = picam2.capture_array()
+#        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
         kernal = np.ones((5, 5), "uint8")
         if(globalVars.isNew):
             if(globalVars.oHueL != 0 and (not(lowHue == globalVars.oHueL))):
@@ -69,7 +69,9 @@ def maviAlgila():
         if(kernalSzGsn%2==1):
             kernalSizeGsn = (kernalSzGsn, kernalSzGsn)       
         
-        # cv2.imshow('Raw Image', frame)
+        cv2.imshow('Raw Image', frame)
+#        print(type(frame))
+#        _, frameS = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 95])
         cameraSender.send_image(cameraServers[0], frame)
 
         frameBGR = cv2.GaussianBlur(frame, kernalSizeGsn, 0)
@@ -85,8 +87,8 @@ def maviAlgila():
 
         # Put mask over top of the original image.      
         result = cv2.bitwise_and(frame, frame, mask = mask)        
-        # cv2.imshow('Final Image', result)
-        cameraSender.send_image(cameraServers[1], result)
+        cv2.imshow('Final Image', result)
+#        cameraSender.send_image(cameraServers[1], result)
         
         contours_bl, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         # contours = contours_bl[0] if len(contours_bl) == 2 else contours_bl[1]

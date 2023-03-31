@@ -1,5 +1,5 @@
 
-hostName = "192.168.1.13"
+hostName = "192.168.203.161"
 serverPort = 8080
 html = """
 <!DOCTYPE html>
@@ -248,7 +248,8 @@ sliderOpay.oninput = function() {
 """
 import imagezmq
 cameraServers = ("RawImage", "FinalImage")
-cameraSender = imagezmq.ImageSender(connect_to='tcp://' + hostName + ':5555')
+cameraHost = '192.168.203.244'
+cameraSender = imagezmq.ImageSender(connect_to='tcp://'+cameraHost+':5555')
 
 class globalVars:
     oHueL = 0
